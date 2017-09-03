@@ -7,75 +7,129 @@
 
 # haraka-plugin-aliases
 
-Clone me, to create a new plugin!
+This plugin allows the configuration of aliases that perform an action or
+change the RCPT address. Aliases are specified in a JSON formatted config file,
+and must have an action. Syntax errors found in the JSON config will stop the server.
 
-# Template Instructions
+IMPORTANT: this plugin must appear in `config/plugins` before other plugins
+that run on hook_rcpt
 
-These instructions will not self-destruct after use. Use and destroy.
+WARNING: DO NOT USE THIS PLUGIN WITH queue/smtp\_proxy.
 
-See also, [How to Write a Plugin](https://github.com/haraka/Haraka/wiki/Write-a-Plugin) and [Plugins.md](https://github.com/haraka/Haraka/blob/master/docs/Plugins.md) for additional plugin writing information.
+## Configuration
 
-## Create a new repo for your plugin
+### aliases
 
-Haraka plugins are named like `haraka-plugin-something`. All the namespace after `haraka-plugin-` is yours for the taking. Please check the [Plugins]() page and a Google search to see what plugins already exist.
+JSON formatted config file that contains keys to match against RCPT addresses, and values that are objects with an "action" : "<action>" property. Example:
 
-Once you've settled on a name, create the GitHub repo. On the repo's main page, click the _Clone or download_ button and copy the URL. Then paste that URL into a local ENV variable with a command like this:
-
-```sh
-export MY_GITHUB_ORG=haraka
-export MY_PLUGIN_NAME=haraka-plugin-SOMETHING
+```json
+{ "test1" : { "action" : "drop" } }
 ```
 
-Clone and rename the aliases repo:
+In the above example the "test1" alias will drop any message that matches test1, test1-*, or test1+* (wildcard '-' or '+', see below).  Actions may have 0 or more options listed like so:
 
-```sh
-git clone git@github.com:haraka/haraka-plugin-aliases.git
-mv haraka-plugin-aliases $MY_PLUGIN_NAME
-cd $MY_PLUGIN_NAME
-git remote rm origin
-git remote add origin "git@github.com:$MY_GITHUB_ORG/$MY_PLUGIN_NAME.git"
+```json
+{ "test3" : { "action" : "alias", "to" : "test3-works" } }
 ```
 
-Now you'll have a local git repo to begin authoring your plugin
+In the above example the "test3" alias has an action of "alias" and a mandatory "to" field. If "to" were missing the alias would fail and an error would be emitted.
 
-## rename boilerplate
+Aliases of 'user', '@host' and 'user@host' possible:
 
-Replaces all uses of the word `aliases` with your plugin's name.
-
-./redress.sh [something]
-
-You'll then be prompted to update package.json and then force push this repo onto the GitHub repo you've created earlier.
-
-
-## Enable Travis-CI testing
-
-- [ ] visit your [Travis-CI profile page](https://travis-ci.org/profile) and enable Continuous Integration testing on the repo
-- [ ] enable Code Climate. Click the _code climate_ badge and import your repo.
-
-
-
-# Add your content here
-
-## INSTALL
-
-```sh
-cd /path/to/local/haraka
-npm install haraka-plugin-aliases
-echo "aliases" >> config/plugins
-service haraka restart
+```json
+{ "demo" : { "action" : "drop" } }
+    or
+{ "@example.com" : { "action" : "drop" } }
+    or
+{ "demo@example.com" : { "action" : "drop" } }
 ```
 
-### Configuration
+Aliases may be expanded to multiple recipients:
 
-If the default configuration is not sufficient, copy the config file from the distribution into your haraka config dir and then modify it:
-
-```sh
-cp node_modules/haraka-plugin-aliases/config/aliases.ini config/aliases.ini
-$EDITOR config/aliases.ini
+```json
+{ "sales@example.com": { "action": "alias", "to": ["alice@example.com", "bob@example.com"] } }
 ```
 
-## USAGE
+### wildcard notation
 
+This plugin supports wildcard matching of aliases against the right most string of a RCPT address.  The characters '-' and '+' are commonly used for subaddressing and this plugin can alias the "user" part of the address.
+
+If the address were test2-testing@example.com (or test2+testing@example.com), the below alias would match:
+
+```json
+{ "test2" : { "action" : "drop" } }
+```
+
+Larger and more specific aliases match first when using wildcard '-' notation.  If the above RCPT was evaluated with this alias config, it would alias:
+
+```json
+{
+    "test2" : { "action" : "drop" },
+    "test2-testing" : { "action" : "alias", "to" : "test@foo.com" }
+}
+```
+
+#### chaining and circuits
+
+Alias chaining is not supported. As a side-effect, we enjoy protections against alias circuits.
+
+* optional one line formatting
+
+Any valid JSON will due. Please consider keeping each alias on its own line so that others that wish to grep the aliases file have an easier time finding the full configuration for an alias.
+
+* nondeterministic duplicate matches
+
+This plugin was written with speed in mind.  That means every lookup hashes into the alias file for its match.  While the act of doing so is fast, it does mean that any duplicate alias entries will match nondeterministically.  That is, we cannot predict what will happen here:
+
+```json
+{
+    "coinflip" : { "action" : "alias", "to" : "heads@coin.com" },
+    "coinflip" : { "action" : "alias", "to" : "tails@coin.com" }
+}
+```
+
+Due to node.js implementation, one result will likely always be chosen over the other, so this is not exactly a coinflip.  We simply cannot say what the language implementation will do and it could change.
+
+## action (required)
+
+The following is a list of supported actions and their options.
+
+* drop
+
+    Drops a message while pretending everything was okay to the sender. This acts like an alias to /dev/null.
+
+* alias
+
+    Maps the alias key to the address specified in the "to" option.  A note about matching in addition to the note about wildcard '-' above.  When we match an alias, we store the hostname of the match for a shortcut substitution syntax later.
+
+    * to (required)
+
+    This option is the full address, or local part at matched hostname that the RCPT address will be re-written to.  For an example of an alias to a full address consider the following:
+
+    ```json
+    { "test5" : { "action" : "alias", "to" : "test5@foo.com" } }
+    ```
+
+    This maps RCPT matches for "test5" to "test5-works@foo.com". This would map "test5@somedomain.com" to "test5-works@foo.com" every time. Compare this notation with its shortcut counterpart, best used when the "to" address is at the same domain as the match:
+
+    ```json
+    { "test4" : { "action" : "alias", "to" : "test4" } }
+    ```
+
+    This notation is more compact. Mail to "test4-foo@anydomain.com" will map to "test4@anydomain.com". This notation enables lots of aliases on a single domain to map to other local parts at the same domain.
+
+## Example Configuration
+
+```json
+{
+    "test1" : { "action" : "drop" },
+    "test2" : { "action" : "drop" },
+    "test3" : { "action" : "alias", "to" : "test3-works" },
+    "test4" : { "action" : "alias", "to" : "test4" },
+    "test5" : { "action" : "alias", "to" : "test5-works@success.com" },
+    "test6" : { "action" : "alias", "to" : "test6-works@success.com" }
+}
+```
 
 <!-- leave these buried at the bottom of the document -->
 [ci-img]: https://travis-ci.org/haraka/haraka-plugin-aliases.svg

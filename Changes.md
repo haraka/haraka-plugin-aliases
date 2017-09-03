@@ -1,4 +1,4 @@
 
-# 1.0.0 - 201_-__-__
+# 1.0.0 - 2017-09-01
 
-- initial release
+- imported from haraka
