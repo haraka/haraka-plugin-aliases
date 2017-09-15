@@ -68,7 +68,7 @@ exports.aliases = function (next, connection, params) {
     }
 
     // user prefix + domain match
-    let prefix_dom = `${match[0]}@${host}`;
+    const prefix_dom = `${match[0]}@${host}`;
     if (cfg[prefix_dom]) {
         if (cfg[prefix_dom].action) action = cfg[prefix_dom].action;
         return onMatch(prefix_dom, action);
