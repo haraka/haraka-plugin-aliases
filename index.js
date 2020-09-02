@@ -74,6 +74,13 @@ exports.aliases = function (next, connection, params) {
         return onMatch(prefix_dom, action);
     }
 
+    // Match  *. Rewrite all emails that are not matching to this
+    if (cfg["*"]) {
+        if (cfg["*"].action) action = cfg["*"].action;
+        return onMatch("*", action);
+    }
+    
+
     next();
 };
 

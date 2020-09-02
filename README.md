@@ -69,6 +69,14 @@ Larger and more specific aliases match first when using wildcard '-' notation.  
 }
 ```
 
+It also allows you to route all emails to a certain domain:
+
+```json
+{
+    "*" : { "action" : "alias", "to" : "test15-works@success.com" }
+}
+```
+
 #### chaining and circuits
 
 Alias chaining is not supported. As a side-effect, we enjoy protections against alias circuits.

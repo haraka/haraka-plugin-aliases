@@ -329,5 +329,21 @@ exports.aliases = {
         }.bind(this);
 
         this.plugin.aliases(next, this.connection, this.params);
+    },
+    'should map * to test15-works@success.com': function(test) {
+        // these will get reset in _set_up everytime
+        this.recip = new Address('test15@example.com');
+        this.params = [this.recip];
+        const result = new Address('<test15-works@success.com>');
+
+        const next = function(action) {
+            test.expect(3);
+            test.ok(this.connection.transaction.rcpt_to);
+            test.ok(Array.isArray(this.connection.transaction.rcpt_to));
+            test.deepEqual(this.connection.transaction.rcpt_to.pop(), result);
+            test.done();
+        }.bind(this);
+
+        this.plugin.aliases(next, this.connection, this.params);
     }
 };
