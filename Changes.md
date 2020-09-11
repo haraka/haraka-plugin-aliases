@@ -3,6 +3,6 @@
 
 - imported from haraka
 
-# 1.0.1 - 2017-09-01
+# 1.0.1 - 2020-09-02
 
 - added the option to alias all emails with *
