@@ -13,5 +13,6 @@
   "test11@example.org" : { "action" : "drop" },
   "@demo.com" : { "action" : "alias", "to" : "test12-works@success.com" },
   "test13@example.net" : { "action" : "alias", "to" : "test13-works@success.com" },
-  "test14@example.net" : { "action" : "alias", "to" : ["alice@success.com", "bob@success.com"] }
+  "test14@example.net" : { "action" : "alias", "to" : ["alice@success.com", "bob@success.com"] },
+  "*" : { "action" : "alias", "to" : "test15-works@success.com" }
 }
