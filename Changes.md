@@ -3,11 +3,11 @@
 
 - synced from Haraka/plugins/aliases
 - dep(eslint): 3 -> 8
-- chore(ci): add github workflows
-- chore(ci): delete .travis.yml, appveyor.yml
-- synced from main repo
+- chore(ci): add github workflows, codeql, ci, publish
+- chore(ci): delete travis and appveyor configs
+- chore: ignore package-lock.json
+- chore(test): replaced nodeunit with mocha
 - lint: use shorthand in tests
-- ignore package-lock.json
 
 
 ### 1.0.0 - 2017-09-01
