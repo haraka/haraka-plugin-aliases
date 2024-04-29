@@ -81,7 +81,7 @@ exports.aliases = function (next, connection, params) {
 }
 
 function _drop(plugin, connection, rcpt) {
-  connection.logdebug(plugin, `marking ${rcpt} for drop`)
+  connection.loginfo(plugin, `marking ${rcpt} for drop`)
   if (!connection?.transaction?.notes) return
   connection.transaction.notes.discard = true
 }
@@ -98,14 +98,14 @@ function _alias(plugin, connection, key, config, host) {
 
   const txn = connection.transaction
   if (Array.isArray(config.to)) {
-    connection.logdebug(plugin, `aliasing ${txn.rcpt_to} to ${config.to}`)
+    connection.loginfo(plugin, `aliasing ${txn.rcpt_to} to ${config.to}`)
     txn.rcpt_to.pop()
     for (const addr of config.to) {
       txn.rcpt_to.push(new Address(`<${addr}>`))
     }
   } else {
     const to = config.to.search('@') === -1 ? `${config.to}@${host}` : config.to
-    connection.logdebug(plugin, `aliasing ${txn.rcpt_to} to ${to}`)
+    connection.loginfo(plugin, `aliasing ${txn.rcpt_to} to ${to}`)
     txn.rcpt_to.pop()
     txn.rcpt_to.push(new Address(`<${to}>`))
   }
