@@ -3,11 +3,19 @@
   "version": "1.0.2",
   "description": "Haraka plugin that add aliases",
   "main": "index.js",
-  "files": ["CHANGELOG.md", "config"],
+  "files": [
+    "CHANGELOG.md",
+    "config"
+  ],
   "scripts": {
-    "lint": "npx eslint *.js test",
-    "lintfix": "npx eslint --fix *.js test",
-    "test": "npx mocha@10"
+    "format": "npm run prettier:fix && npm run lint:fix",
+    "lint": "npx eslint@^8 *.js test",
+    "lint:fix": "npx eslint@^8 *.js test --fix",
+    "prettier": "npx prettier . --check",
+    "prettier:fix": "npx prettier . --write --log-level=warn",
+    "test": "npx mocha@^10",
+    "versions": "npx dependency-version-checker check",
+    "versions:fix": "npx dependency-version-checker update"
   },
   "repository": {
     "type": "git",
