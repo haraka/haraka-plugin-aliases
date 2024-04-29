@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "npx eslint *.js test",
     "lintfix": "npx eslint --fix *.js test",
-    "test": "npx mocha"
+    "test": "npx mocha@10"
   },
   "repository": {
     "type": "git",
@@ -28,9 +28,8 @@
     "address-rfc2821": "*"
   },
   "devDependencies": {
-    "eslint": ">=8",
-    "eslint-plugin-haraka": "*",
-    "haraka-test-fixtures": "*",
-    "mocha": "9"
+    "eslint": "^8.0.0",
+    "@haraka/eslint-config": "^1.0.0",
+    "haraka-test-fixtures": "^1.0.0"
   }
 }

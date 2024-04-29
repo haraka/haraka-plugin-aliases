@@ -6,9 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### [1.0.2] - 2024-04-29
 
+- lint: remove duplicate / stale rules from .eslintrc
+- dep: eslint-plugin-haraka -> @haraka/eslint-config
+- chore: populate [files] in package.json
+- doc(CHANGELOG) renamed from Changes
 - doc(CONTRIBUTORS): added
 - ci: update to shared GHA workflows
-- added the option to alias all emails with *
+- added the option to alias all emails with * (#12)
 
 ### 1.0.1 - 2022-05-26
 
