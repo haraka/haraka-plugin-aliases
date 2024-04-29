@@ -238,4 +238,19 @@ describe('aliases', function () {
             done()
         }, this.connection, [new Address('<test9@example.com>')]);
     })
+  
+    it('should map * to test15-works@success.com': function (done) {
+        // these will get reset in _set_up everytime
+        this.recip = new Address('test15@example.com');
+
+        this.plugin.aliases((action) => {
+            assert.ok(this.connection.transaction.rcpt_to);
+            assert.ok(Array.isArray(this.connection.transaction.rcpt_to));
+            assert.deepEqual(
+              this.connection.transaction.rcpt_to.pop(),
+              new Address('<test15-works@success.com>'),
+            );
+            done();
+        }, this.connection, [this.recip]);
+    })
 })

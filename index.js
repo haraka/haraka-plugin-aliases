@@ -69,6 +69,11 @@ exports.aliases = function (next, connection, params) {
         onMatch(match, action, rcpt)
     }
 
+    // Match  *. When having a * in the alias list it will rewrite all emails that have not been matched by the above rules
+    if (cfg["*"]) {
+        if (cfg["*"].action) action = cfg["*"].action;
+        return onMatch("*", action);
+    }
     next()
 }
 
