@@ -4,12 +4,9 @@
 
 # haraka-plugin-aliases
 
-This plugin allows the configuration of aliases that perform an action or
-change the RCPT address. Aliases are specified in a JSON formatted config file,
-and must have an action. Syntax errors found in the JSON config will stop the server.
+This plugin allows the configuration of aliases that perform an action or change the RCPT address. Aliases are specified in a JSON formatted config file, and must have an action. Syntax errors found in the JSON config will stop the server.
 
-IMPORTANT: this plugin must appear in `config/plugins` before other plugins
-that run on hook_rcpt
+IMPORTANT: this plugin must appear in `config/plugins` before other plugins that run on hook_rcpt
 
 WARNING: DO NOT USE THIS PLUGIN WITH queue/smtp_proxy.
 
@@ -75,7 +72,7 @@ It also allows you to route all emails to a certain domain:
 
 ```json
 {
-    "*" : { "action" : "alias", "to" : "test15-works@success.com" }
+  "*": { "action": "alias", "to": "test15-works@success.com" }
 }
 ```
 

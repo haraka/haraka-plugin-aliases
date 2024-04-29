@@ -33,11 +33,11 @@
   },
   "homepage": "https://github.com/haraka/haraka-plugin-aliases#readme",
   "dependencies": {
-    "address-rfc2821": "*"
+    "address-rfc2821": "^2.1.2"
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
-    "@haraka/eslint-config": "^1.0.0",
-    "haraka-test-fixtures": "^1.0.0"
+    "eslint": "^8.57.0",
+    "@haraka/eslint-config": "^1.1.5",
+    "haraka-test-fixtures": "^1.3.7"
   }
 }

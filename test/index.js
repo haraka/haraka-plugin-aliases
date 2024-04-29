@@ -11,11 +11,10 @@ const stub = fixtures.stub.stub
 const _set_up = function (done) {
   // needed for tests
   this.plugin = new fixtures.plugin('aliases')
-  this.recip = new Address('<test1@example.com>')
-  this.params = [this.recip]
+  this.params = [new Address('<test1@example.com>')]
 
   this.connection = new fixtures.connection.createConnection()
-  this.connection.transaction = new fixtures.transaction.createTransaction()
+  this.connection.init_transaction()
   this.connection.transaction.rcpt_to = [this.params]
   this.connection.loginfo = stub()
 
@@ -64,7 +63,7 @@ describe('aliases', function () {
   it('aliases hook always returns next()', function (done) {
     this.plugin.aliases(
       (action) => {
-        assert.equal(undefined, action)
+        assert.equal(action, undefined)
         done()
       },
       this.connection,
@@ -95,13 +94,12 @@ describe('aliases', function () {
   })
 
   it('should drop test2-specific@example.com', function (done) {
-    const result = new Address('<test2@example.com>')
     this.plugin.aliases(
       (action) => {
-        assert.equal(undefined, this.connection.transaction.notes.discard)
+        assert.equal(this.connection.transaction.notes.discard, undefined)
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), result)
+        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), new Address('<test2@example.com>'))
         done()
       },
       this.connection,
@@ -308,19 +306,20 @@ describe('aliases', function () {
     )
   })
 
-  it('should map * to test15-works@success.com': function (done) {
-    // these will get reset in _set_up everytime
-    this.recip = new Address('test15@example.com');
-
-    this.plugin.aliases((action) => {
-      assert.ok(this.connection.transaction.rcpt_to);
-      assert.ok(Array.isArray(this.connection.transaction.rcpt_to));
-      assert.deepEqual(
-        this.connection.transaction.rcpt_to.pop(),
-        new Address('<test15-works@success.com>'),
-      );
-      done();
-    }, this.connection, [this.recip]);
+  it('should map * to test15-works@success.com', function (done) {
+    this.plugin.aliases(
+      (action) => {
+        assert.ok(this.connection.transaction.rcpt_to)
+        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test15-works@success.com>'),
+        )
+        done()
+      },
+      this.connection,
+      [new Address('test15@example.com')],
+    )
   })
 
   it('action alias should fail with loginfo on missing to', function (done) {

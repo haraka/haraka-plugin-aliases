@@ -11,16 +11,14 @@ exports.register = function () {
 }
 
 exports.load_aliases = function () {
-  const plugin = this
-  plugin.cfg = plugin.config.get('aliases', 'json', function () {
-    plugin.load_aliases()
+  this.cfg = this.config.get('aliases', 'json', () => {
+    this.load_aliases()
   })
-  if (plugin.cfg === undefined) plugin.cfg = {}
+  if (this.cfg === undefined) this.cfg = {}
 }
 
 exports.aliases = function (next, connection, params) {
-  const plugin = this
-  const cfg = plugin.cfg
+  const cfg = this.cfg
   const rcpt = params[0].address()
   const user = params[0].user
   const host = params[0].host
@@ -28,16 +26,16 @@ exports.aliases = function (next, connection, params) {
   let match = user.split(/[+-]/, 1)
   let action = '<missing>'
 
-  function onMatch(alias1, action1, drop1) {
+  const onMatch = (alias1, action1, drop1) => {
     switch (action.toLowerCase()) {
       case 'drop':
-        _drop(plugin, connection, drop1)
+        _drop(this, connection, drop1)
         break
       case 'alias':
-        _alias(plugin, connection, alias1, cfg[alias1], host)
+        _alias(this, connection, alias1, cfg[alias1], host)
         break
       default:
-        connection.loginfo(plugin, `unknown action: ${action1}`)
+        connection.loginfo(this, `unknown action: ${action1}`)
     }
   }
 
@@ -46,16 +44,12 @@ exports.aliases = function (next, connection, params) {
     match = rcpt
     if (cfg[match].action) action = cfg[match].action
     onMatch(match, action, rcpt)
-  }
-
-  if (cfg[`@${host}`]) {
+  } else if (cfg[`@${host}`]) {
     // @domain match
     match = `@${host}`
     if (cfg[match].action) action = cfg[match].action
     onMatch(match, action, match)
-  }
-
-  if (cfg[user]) {
+  } else if (cfg[user]) {
     // user only match
     match = user
     if (cfg[user].action) action = cfg[user].action
@@ -70,11 +64,10 @@ exports.aliases = function (next, connection, params) {
     if (cfg[match].action) action = cfg[match].action
     onMatch(match, action, rcpt)
   }
-
-  // Match  *. When having a * in the alias list it will rewrite all emails that have not been matched by the above rules
-  if (cfg["*"]) {
-    if (cfg["*"].action) action = cfg["*"].action;
-    return onMatch("*", action);
+  else if (cfg['*']) {
+    // Match *. When having a * in the alias list it will rewrite all emails that have not been matched by the above rules
+    if (cfg['*'].action) action = cfg['*'].action
+    onMatch('*', action)
   }
 
   next()
@@ -100,9 +93,9 @@ function _alias(plugin, connection, key, config, host) {
   if (Array.isArray(config.to)) {
     connection.logdebug(plugin, `aliasing ${txn.rcpt_to} to ${config.to}`)
     txn.rcpt_to.pop()
-    config.to.forEach((addr) => {
+    for (const addr of config.to) {
       txn.rcpt_to.push(new Address(`<${addr}>`))
-    })
+    }
   } else {
     const to = config.to.search('@') === -1 ? `${config.to}@${host}` : config.to
     connection.logdebug(plugin, `aliasing ${txn.rcpt_to} to ${to}`)
