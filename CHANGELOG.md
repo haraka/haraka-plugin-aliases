@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### [1.0.2] - 2024-04-29
 
 - index: make separate if blocks in cascading list
+- fix: rename config/aliases to config/aliases.json
+- fix: wildcard + domain matches before domain. Fixes #15
 - lint: remove duplicate / stale rules from .eslintrc
 - dep: eslint-plugin-haraka -> @haraka/eslint-config
 - deps: bump to latest versions

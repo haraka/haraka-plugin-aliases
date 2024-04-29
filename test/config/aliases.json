@@ -1,0 +1,60 @@
+{
+  "test1": {
+    "action": "drop"
+  },
+  "test2": {
+    "action": "drop"
+  },
+  "test2-specific": {
+    "action": "alias",
+    "to": "test2"
+  },
+  "test3": {
+    "action": "alias",
+    "to": "test3-works"
+  },
+  "test4": {
+    "action": "alias",
+    "to": "test4"
+  },
+  "test5": {
+    "action": "alias",
+    "to": "test5-works@success.com"
+  },
+  "test6": {
+    "action": "alias",
+    "to": "test6-works@success.com"
+  },
+  "test7": {
+    "action": "fail",
+    "to": "should_fail"
+  },
+  "test8": {
+    "to": "should_fail"
+  },
+  "test9": {
+    "action": "alias"
+  },
+  "@example.co": {
+    "action": "drop"
+  },
+  "test11@example.org": {
+    "action": "drop"
+  },
+  "@demo.com": {
+    "action": "alias",
+    "to": "test12-works@success.com"
+  },
+  "test13@example.net": {
+    "action": "alias",
+    "to": "test13-works@success.com"
+  },
+  "test14@example.net": {
+    "action": "alias",
+    "to": ["alice@success.com", "bob@success.com"]
+  },
+  "*": {
+    "action": "alias",
+    "to": "test15-works@success.com"
+  }
+}

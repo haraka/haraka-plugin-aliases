@@ -11,9 +11,16 @@ exports.register = function () {
 }
 
 exports.load_aliases = function () {
-  this.cfg = this.config.get('aliases', 'json', () => {
+  this.cfg = this.config.get('aliases.json', 'json', () => {
     this.load_aliases()
   })
+
+  if (this.cfg === undefined) {
+    this.cfg = this.config.get('aliases', 'json', () => {
+      this.load_aliases()
+    })
+  }
+
   if (this.cfg === undefined) this.cfg = {}
 }
 
@@ -44,27 +51,27 @@ exports.aliases = function (next, connection, params) {
     match = rcpt
     if (cfg[match].action) action = cfg[match].action
     onMatch(match, action, rcpt)
-  } else if (cfg[`@${host}`]) {
-    // @domain match
-    match = `@${host}`
-    if (cfg[match].action) action = cfg[match].action
-    onMatch(match, action, match)
   } else if (cfg[user]) {
     // user only match
     match = user
     if (cfg[user].action) action = cfg[user].action
-    onMatch(match, action, rcpt)
-  } else if (cfg[match[0]]) {
-    match = match[0]
-    if (cfg[match].action) action = cfg[match].action
     onMatch(match, action, rcpt)
   } else if (cfg[`${match[0]}@${host}`]) {
     // user prefix + domain match
     match = `${match[0]}@${host}`
     if (cfg[match].action) action = cfg[match].action
     onMatch(match, action, rcpt)
-  }
-  else if (cfg['*']) {
+  } else if (cfg[match[0]]) {
+    // user prefix
+    match = match[0]
+    if (cfg[match].action) action = cfg[match].action
+    onMatch(match, action, rcpt)
+  } else if (cfg[`@${host}`]) {
+    // @domain match
+    match = `@${host}`
+    if (cfg[match].action) action = cfg[match].action
+    onMatch(match, action, match)
+  } else if (cfg['*']) {
     // Match *. When having a * in the alias list it will rewrite all emails that have not been matched by the above rules
     if (cfg['*'].action) action = cfg['*'].action
     onMatch('*', action)

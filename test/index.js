@@ -6,21 +6,18 @@ const path = require('path')
 const Address = require('address-rfc2821').Address
 const fixtures = require('haraka-test-fixtures')
 
-const stub = fixtures.stub.stub
-
 const _set_up = function (done) {
-  // needed for tests
   this.plugin = new fixtures.plugin('aliases')
   this.params = [new Address('<test1@example.com>')]
 
   this.connection = new fixtures.connection.createConnection()
   this.connection.init_transaction()
   this.connection.transaction.rcpt_to = [this.params]
-  this.connection.loginfo = stub()
+  this.connection.loginfo = fixtures.stub.stub()
 
   // some test data
   this.plugin.config = this.plugin.config.module_config(path.resolve('test'))
-  this.plugin.inherits = stub()
+  this.plugin.inherits = fixtures.stub.stub()
 
   // going to need these in multiple tests
   this.plugin.register()
@@ -31,33 +28,28 @@ const _set_up = function (done) {
 describe('aliases', function () {
   beforeEach(_set_up)
 
-  it('should have register function', function (done) {
+  it('should have register function', function () {
     assert.ok(this.plugin)
     assert.equal('function', typeof this.plugin.register)
-    done()
   })
 
-  it('register function should inherit from queue/discard', function (done) {
+  it('register function should inherit from queue/discard', function () {
     assert.ok(this.plugin.inherits.called)
     assert.equal(this.plugin.inherits.args[0], 'queue/discard')
-    done()
   })
 
-  it('register function should call register_hook()', function (done) {
+  it('register function should call register_hook()', function () {
     assert.ok(this.plugin.register_hook.called)
-    done()
   })
 
-  it('register_hook() should register for propper hook', function (done) {
+  it('register_hook() should register for proper hook', function () {
     assert.equal(this.plugin.register_hook.args[0], 'rcpt')
-    done()
   })
 
-  it('register_hook() should register available function', function (done) {
+  it('register_hook() should register available function', function () {
     assert.equal(this.plugin.register_hook.args[1], 'aliases')
     assert.ok(this.plugin.aliases)
-    assert.equal('function', typeof this.plugin.aliases)
-    done()
+    assert.equal(typeof this.plugin.aliases, 'function')
   })
 
   it('aliases hook always returns next()', function (done) {
@@ -99,7 +91,10 @@ describe('aliases', function () {
         assert.equal(this.connection.transaction.notes.discard, undefined)
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), new Address('<test2@example.com>'))
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test2@example.com>'),
+        )
         done()
       },
       this.connection,
@@ -108,12 +103,14 @@ describe('aliases', function () {
   })
 
   it('should map test3@example.com to test3-works@example.com', function (done) {
-    const result = new Address('<test3-works@example.com>')
     this.plugin.aliases(
       (action) => {
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), result)
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test3-works@example.com>'),
+        )
         done()
       },
       this.connection,
@@ -122,12 +119,14 @@ describe('aliases', function () {
   })
 
   it('should map test4-testing@example.com to test4@example.com', function (done) {
-    const result = new Address('<test4@example.com>')
     this.plugin.aliases(
       (action) => {
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), result)
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test4@example.com>'),
+        )
         done()
       },
       this.connection,
@@ -136,12 +135,14 @@ describe('aliases', function () {
   })
 
   it('should map test4+testing@example.com to test4@example.com', function (done) {
-    const result = new Address('<test4@example.com>')
     this.plugin.aliases(
       (action) => {
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), result)
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test4@example.com>'),
+        )
         done()
       },
       this.connection,
@@ -150,12 +151,14 @@ describe('aliases', function () {
   })
 
   it('should map test5@example.com to test5-works@success.com', function (done) {
-    const result = new Address('<test5-works@success.com>')
     this.plugin.aliases(
       (action) => {
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), result)
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test5-works@success.com>'),
+        )
         done()
       },
       this.connection,
@@ -164,12 +167,14 @@ describe('aliases', function () {
   })
 
   it('should map test6-testing@example.com to test6-works@success.com', function (done) {
-    const result = new Address('<test6-works@success.com>')
     this.plugin.aliases(
       (action) => {
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), result)
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test6-works@success.com>'),
+        )
         done()
       },
       this.connection,
@@ -200,12 +205,14 @@ describe('aliases', function () {
   })
 
   it('should map @demo.com to test12-works@success.com', function (done) {
-    const result = new Address('<test12-works@success.com>')
     this.plugin.aliases(
       (action) => {
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), result)
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test12-works@success.com>'),
+        )
         done()
       },
       this.connection,
@@ -214,14 +221,14 @@ describe('aliases', function () {
   })
 
   it('should map test13@example.net to test13-works@success.com', function (done) {
-    // these will get reset in _set_up everytime
-    const result = new Address('<test13-works@success.com>')
-
     this.plugin.aliases(
       (action) => {
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), result)
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test13-works@success.com>'),
+        )
         done()
       },
       this.connection,
@@ -230,14 +237,14 @@ describe('aliases', function () {
   })
 
   it('should map test13+subaddress@example.net to test13-works@success.com', function (done) {
-    // these will get reset in _set_up everytime
-    const result = new Address('<test13-works@success.com>')
-
     this.plugin.aliases(
       (action) => {
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to.pop(), result)
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<test13-works@success.com>'),
+        )
         done()
       },
       this.connection,
@@ -246,17 +253,14 @@ describe('aliases', function () {
   })
 
   it('should explode test14@example.net to alice@success.com and bob@success.com', function (done) {
-    // these will get reset in _set_up everytime
-    const result = [
-      new Address('<alice@success.com>'),
-      new Address('<bob@success.com>'),
-    ]
-
     this.plugin.aliases(
       (action) => {
         assert.ok(this.connection.transaction.rcpt_to)
         assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to, result)
+        assert.deepEqual(this.connection.transaction.rcpt_to, [
+          new Address('<alice@success.com>'),
+          new Address('<bob@success.com>'),
+        ])
         done()
       },
       this.connection,
@@ -334,6 +338,31 @@ describe('aliases', function () {
       },
       this.connection,
       [new Address('<test9@example.com>')],
+    )
+  })
+
+  it('should prefer more specific rule', function (done) {
+    this.plugin.cfg = {
+      '@example.com': {
+        action: 'alias',
+        to: 'bar@example.com',
+      },
+      foo: {
+        action: 'alias',
+        to: 'foo@example.com',
+      },
+    }
+
+    this.plugin.aliases(
+      (action) => {
+        assert.deepEqual(
+          this.connection.transaction.rcpt_to.pop(),
+          new Address('<foo@example.com>'),
+        )
+        done()
+      },
+      this.connection,
+      [new Address('<foo-test@example.com>')],
     )
   })
 })
