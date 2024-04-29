@@ -1,8 +1,9 @@
 {
   "name": "haraka-plugin-aliases",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Haraka plugin that add aliases",
   "main": "index.js",
+  "files": ["CHANGELOG.md", "config"],
   "scripts": {
     "lint": "npx eslint *.js test",
     "lintfix": "npx eslint --fix *.js test",

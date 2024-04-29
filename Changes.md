@@ -1,3 +1,14 @@
+# Changelog
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/).
+
+### Unreleased
+
+### [1.0.2] - 2024-04-29
+
+- doc(CONTRIBUTORS): added
+- ci: update to shared GHA workflows
+- added the option to alias all emails with *
 
 ### 1.0.1 - 2022-05-26
 
@@ -9,11 +20,8 @@
 - chore(test): replaced nodeunit with mocha
 - lint: use shorthand in tests
 
-
 ### 1.0.0 - 2017-09-01
 
 - imported from haraka
 
-# 1.0.1 - 2020-09-02
-
-- added the option to alias all emails with *
+[1.0.2]: https://github.com/haraka/haraka-plugin-aliases/releases/tag/v1.0.2
