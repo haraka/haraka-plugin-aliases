@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - chore: populate [files] in package.json
 - doc(CHANGELOG) renamed from Changes
 - doc(CONTRIBUTORS): added
+- doc(README): fix URL for CI tests
 - ci: update to shared GHA workflows
 - added the option to alias all emails with \* (#12)
 

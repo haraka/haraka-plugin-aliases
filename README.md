@@ -140,8 +140,8 @@ The following is a list of supported actions and their options.
 
 <!-- leave these buried at the bottom of the document -->
 
-[ci-img]: https://travis-ci.org/haraka/haraka-plugin-aliases.svg
-[ci-url]: https://travis-ci.org/haraka/haraka-plugin-aliases
+[ci-img]: https://github.com/haraka/haraka-plugin-aliases/actions/workflows/ci.yml/badge.svg
+[ci-url]: https://github.com/haraka/haraka-plugin-aliases/actions/workflows/ci.yml
 [cov-img]: https://codecov.io/github/haraka/haraka-plugin-aliases/coverage.svg
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-aliases
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-aliases/badges/gpa.svg
