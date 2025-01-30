@@ -1,6 +1,5 @@
 [![Build Status][ci-img]][ci-url]
 [![Code Climate][clim-img]][clim-url]
-[![NPM][npm-img]][npm-url]
 
 # haraka-plugin-aliases
 
@@ -146,5 +145,3 @@ The following is a list of supported actions and their options.
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-aliases
 [clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-aliases/badges/gpa.svg
 [clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-aliases
-[npm-img]: https://nodei.co/npm/haraka-plugin-aliases.png
-[npm-url]: https://www.npmjs.com/package/haraka-plugin-aliases
