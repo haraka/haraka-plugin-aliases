@@ -6,7 +6,7 @@ const path = require('path')
 const Address = require('address-rfc2821').Address
 const fixtures = require('haraka-test-fixtures')
 
-const _set_up = function (done) {
+const _set_up = function () {
   this.plugin = new fixtures.plugin('aliases')
   this.params = [new Address('<test1@example.com>')]
 
@@ -21,8 +21,6 @@ const _set_up = function (done) {
 
   // going to need these in multiple tests
   this.plugin.register()
-
-  done()
 }
 
 describe('aliases', function () {
@@ -52,296 +50,336 @@ describe('aliases', function () {
     assert.equal(typeof this.plugin.aliases, 'function')
   })
 
-  it('aliases hook always returns next()', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.equal(action, undefined)
-        done()
-      },
-      this.connection,
-      this.params,
-    )
+  it('aliases hook always returns next()', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.equal(action, undefined)
+          resolve()
+        },
+        this.connection,
+        this.params,
+      )
+    })
   })
 
-  it('should drop test1@example.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.notes.discard)
-        done()
-      },
-      this.connection,
-      this.params,
-    )
+  it('should drop test1@example.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.notes.discard)
+          resolve()
+        },
+        this.connection,
+        this.params,
+      )
+    })
   })
 
-  it('should drop test2-testing@example.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.notes.discard)
-        done()
-      },
-      this.connection,
-      [new Address('<test2-testing@example.com>')],
-    )
+  it('should drop test2-testing@example.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.notes.discard)
+          resolve()
+        },
+        this.connection,
+        [new Address('<test2-testing@example.com>')],
+      )
+    })
   })
 
-  it('should drop test2-specific@example.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.equal(this.connection.transaction.notes.discard, undefined)
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test2@example.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test2-specific@example.com>')],
-    )
+  it('should drop test2-specific@example.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.equal(this.connection.transaction.notes.discard, undefined)
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test2@example.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test2-specific@example.com>')],
+      )
+    })
   })
 
-  it('should map test3@example.com to test3-works@example.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test3-works@example.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test3@example.com>')],
-    )
+  it('should map test3@example.com to test3-works@example.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test3-works@example.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test3@example.com>')],
+      )
+    })
   })
 
-  it('should map test4-testing@example.com to test4@example.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test4@example.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test4-testing@example.com>')],
-    )
+  it('should map test4-testing@example.com to test4@example.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test4@example.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test4-testing@example.com>')],
+      )
+    })
   })
 
-  it('should map test4+testing@example.com to test4@example.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test4@example.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test4+testing@example.com>')],
-    )
+  it('should map test4+testing@example.com to test4@example.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test4@example.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test4+testing@example.com>')],
+      )
+    })
   })
 
-  it('should map test5@example.com to test5-works@success.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test5-works@success.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test5@example.com>')],
-    )
+  it('should map test5@example.com to test5-works@success.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test5-works@success.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test5@example.com>')],
+      )
+    })
   })
 
-  it('should map test6-testing@example.com to test6-works@success.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test6-works@success.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test6-testing@example.com>')],
-    )
+  it('should map test6-testing@example.com to test6-works@success.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test6-works@success.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test6-testing@example.com>')],
+      )
+    })
   })
 
-  it('should drop @example.co', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.notes.discard)
-        done()
-      },
-      this.connection,
-      [new Address('<oc.elpmaxe@example.co>')],
-    )
+  it('should drop @example.co', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.notes.discard)
+          resolve()
+        },
+        this.connection,
+        [new Address('<oc.elpmaxe@example.co>')],
+      )
+    })
   })
 
-  it('should drop test11@example.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.notes.discard)
-        done()
-      },
-      this.connection,
-      [new Address('<test11@example.org>')],
-    )
+  it('should drop test11@example.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.notes.discard)
+          resolve()
+        },
+        this.connection,
+        [new Address('<test11@example.org>')],
+      )
+    })
   })
 
-  it('should map @demo.com to test12-works@success.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test12-works@success.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<demo2014@demo.com>')],
-    )
+  it('should map @demo.com to test12-works@success.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test12-works@success.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<demo2014@demo.com>')],
+      )
+    })
   })
 
-  it('should map test13@example.net to test13-works@success.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test13-works@success.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test13@example.net>')],
-    )
+  it('should map test13@example.net to test13-works@success.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test13-works@success.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test13@example.net>')],
+      )
+    })
   })
 
-  it('should map test13+subaddress@example.net to test13-works@success.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test13-works@success.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test13+subaddress@example.net>')],
-    )
+  it('should map test13+subaddress@example.net to test13-works@success.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test13-works@success.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test13+subaddress@example.net>')],
+      )
+    })
   })
 
-  it('should explode test14@example.net to alice@success.com and bob@success.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(this.connection.transaction.rcpt_to, [
-          new Address('<alice@success.com>'),
-          new Address('<bob@success.com>'),
-        ])
-        done()
-      },
-      this.connection,
-      [new Address('<test14@example.net>')],
-    )
+  it('should explode test14@example.net to alice@success.com and bob@success.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(this.connection.transaction.rcpt_to, [
+            new Address('<alice@success.com>'),
+            new Address('<bob@success.com>'),
+          ])
+          resolve()
+        },
+        this.connection,
+        [new Address('<test14@example.net>')],
+      )
+    })
   })
 
-  it('should not drop test1@example.com, no config', function (done) {
+  it('should not drop test1@example.com, no config', async function () {
     this.plugin.cfg = {} // empty config data
-    this.plugin.aliases(
-      (action) => {
-        assert.equal(undefined, this.connection.transaction.notes.discard)
-        done()
-      },
-      this.connection,
-      this.params,
-    )
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.equal(undefined, this.connection.transaction.notes.discard)
+          resolve()
+        },
+        this.connection,
+        this.params,
+      )
+    })
   })
 
-  it('should fail with loginfo on unknown action', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.loginfo.called)
-        assert.equal(
-          this.connection.loginfo.args[1],
-          `unknown action: ${this.plugin.cfg.test7.action}`,
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test7@example.com>')],
-    )
+  it('should fail with loginfo on unknown action', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.loginfo.called)
+          assert.equal(
+            this.connection.loginfo.args[1],
+            `unknown action: ${this.plugin.cfg.test7.action}`,
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test7@example.com>')],
+      )
+    })
   })
 
-  it('should fail with loginfo on missing action', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.loginfo.called)
-        assert.equal(
-          this.connection.loginfo.args[1],
-          'unknown action: <missing>',
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test8@example.com>')],
-    )
+  it('should fail with loginfo on missing action', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.loginfo.called)
+          assert.equal(
+            this.connection.loginfo.args[1],
+            'unknown action: <missing>',
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test8@example.com>')],
+      )
+    })
   })
 
-  it('should map * to test15-works@success.com', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.transaction.rcpt_to)
-        assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<test15-works@success.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('test15@example.com')],
-    )
+  it('should map * to test15-works@success.com', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.transaction.rcpt_to)
+          assert.ok(Array.isArray(this.connection.transaction.rcpt_to))
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<test15-works@success.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('test15@example.com')],
+      )
+    })
   })
 
-  it('action alias should fail with loginfo on missing to', function (done) {
-    this.plugin.aliases(
-      (action) => {
-        assert.ok(this.connection.loginfo.called)
-        assert.equal(
-          this.connection.loginfo.args[1],
-          'alias failed for test9, no "to" field in alias config',
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<test9@example.com>')],
-    )
+  it('action alias should fail with loginfo on missing to', async function () {
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.ok(this.connection.loginfo.called)
+          assert.equal(
+            this.connection.loginfo.args[1],
+            'alias failed for test9, no "to" field in alias config',
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<test9@example.com>')],
+      )
+    })
   })
 
-  it('should prefer more specific rule', function (done) {
+  it('should prefer more specific rule', async function () {
     this.plugin.cfg = {
       '@example.com': {
         action: 'alias',
@@ -353,16 +391,18 @@ describe('aliases', function () {
       },
     }
 
-    this.plugin.aliases(
-      (action) => {
-        assert.deepEqual(
-          this.connection.transaction.rcpt_to.pop(),
-          new Address('<foo@example.com>'),
-        )
-        done()
-      },
-      this.connection,
-      [new Address('<foo-test@example.com>')],
-    )
+    await new Promise((resolve) => {
+      this.plugin.aliases(
+        (action) => {
+          assert.deepEqual(
+            this.connection.transaction.rcpt_to.pop(),
+            new Address('<foo@example.com>'),
+          )
+          resolve()
+        },
+        this.connection,
+        [new Address('<foo-test@example.com>')],
+      )
+    })
   })
 })
