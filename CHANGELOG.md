@@ -4,8 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
-- feat: fix alias + smtp_forward w/multi-domain
-- test: runner is now node:test
+### [1.1.0] - 2026-05-24
+
+- dep(address-rfc2821): replaced with @haraka/email-address
+- feat: fix alias + smtp_forward w/multi-domain #22
+- test: runner is now node:test #22
 - test: remove unnecessary done callbacks #20
 
 ### [1.0.3] - 2025-01-30
@@ -46,3 +49,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 [1.0.1]: https://github.com/haraka/haraka-plugin-aliases/releases/tag/v1.0.1
 [1.0.2]: https://github.com/haraka/haraka-plugin-aliases/releases/tag/v1.0.2
 [1.0.3]: https://github.com/haraka/haraka-plugin-aliases/releases/tag/v1.0.3
+[1.1.0]: https://github.com/haraka/haraka-plugin-aliases/releases/tag/v1.1.0

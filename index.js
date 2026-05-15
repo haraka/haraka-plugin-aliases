@@ -1,6 +1,6 @@
 // aliases
 // Do not run this plugin with the queue/smtp_proxy plugin.
-const Address = require('address-rfc2821').Address
+const { Address } = require('@haraka/email-address')
 
 exports.register = function () {
   this.inherits('queue/discard')
@@ -26,7 +26,7 @@ exports.load_aliases = function () {
 
 exports.aliases = function (next, connection, params) {
   const cfg = this.cfg
-  const rcpt = params[0].address()
+  const rcpt = params[0].address
   const user = params[0].user
   const host = params[0].host
 
