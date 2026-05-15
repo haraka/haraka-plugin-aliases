@@ -107,7 +107,6 @@ The following is a list of supported actions and their options.
 - alias
 
   Maps the alias key to the address specified in the "to" option. A note about matching in addition to the note about wildcard '-' above. When we match an alias, we store the hostname of the match for a shortcut substitution syntax later.
-
   - to (required)
 
   This option is the full address, or local part at matched hostname that the RCPT address will be re-written to. For an example of an alias to a full address consider the following:

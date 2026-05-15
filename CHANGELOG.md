@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+- test: runner is now node:test
+- test: remove unnecessary done callbacks (#20)
+
 ### [1.0.3] - 2025-01-30
 
 - prettier: move config into package.json
