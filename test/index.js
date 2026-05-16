@@ -426,7 +426,10 @@ describe('aliases', () => {
       plugin.aliases(
         () => {
           assert.equal(p[0].address, 'test3-works@example.com')
-          assert.equal(connection.transaction.notes.get('queue.wants'), undefined)
+          assert.equal(
+            connection.transaction.notes.get('queue.wants'),
+            undefined,
+          )
           resolve()
         },
         connection,
@@ -440,7 +443,10 @@ describe('aliases', () => {
     await new Promise((resolve) => {
       plugin.aliases(
         () => {
-          assert.equal(connection.transaction.notes.get('queue.wants'), 'outbound')
+          assert.equal(
+            connection.transaction.notes.get('queue.wants'),
+            'outbound',
+          )
           resolve()
         },
         connection,
@@ -455,7 +461,10 @@ describe('aliases', () => {
       plugin.aliases(
         () => {
           assert.equal(p[0].address, 'alice@success.com')
-          assert.equal(connection.transaction.notes.get('queue.wants'), 'outbound')
+          assert.equal(
+            connection.transaction.notes.get('queue.wants'),
+            'outbound',
+          )
           resolve()
         },
         connection,
