@@ -136,6 +136,24 @@ The following is a list of supported actions and their options.
 }
 ```
 
+## Integration with smtp_forward
+
+When using this plugin together with `queue/smtp_forward`, the following applies:
+
+### Plugin ordering
+
+`aliases` **must** appear before `smtp_forward` in `config/plugins`. This ensures that the recipient address is rewritten before `smtp_forward.check_recipient` runs and selects a delivery server.
+
+### Cross-domain aliases route via outbound
+
+When an alias rewrites an address to a **different domain** (e.g. `technik@domainA.de` → `test@domainB.de`), the plugin sets `queue.wants = 'outbound'` on the transaction. This causes `smtp_forward` to skip delivery entirely, and Haraka's outbound queue handles the message with per-domain MX resolution — no 450 DENYSOFT to the sender, no sender-side retry.
+
+Same-domain aliases (where the rewritten address stays on the original domain) do not change `queue.wants`, so `smtp_forward` routes them normally.
+
+### Known limitation: mixed-recipient transactions
+
+If a single SMTP transaction contains both a cross-domain aliased recipient and a non-aliased recipient that `smtp_forward` would normally handle, there will be a `queue.wants` conflict (`outbound` vs `smtp_forward`). The recommended approach is to avoid this mix, or handle it with a custom queue plugin.
+
 <!-- leave these buried at the bottom of the document -->
 
 [ci-img]: https://github.com/haraka/haraka-plugin-aliases/actions/workflows/ci.yml/badge.svg

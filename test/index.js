@@ -405,4 +405,62 @@ describe('aliases', () => {
       )
     })
   })
+
+  it('single-target string alias updates params[0] to aliased address', async () => {
+    const p = [new Address('<test5@example.com>')]
+    await new Promise((resolve) => {
+      plugin.aliases(
+        () => {
+          assert.equal(p[0].address, 'test5-works@success.com')
+          resolve()
+        },
+        connection,
+        p,
+      )
+    })
+  })
+
+  it('same-domain string alias updates params[0] but does not set queue.wants', async () => {
+    const p = [new Address('<test3@example.com>')]
+    await new Promise((resolve) => {
+      plugin.aliases(
+        () => {
+          assert.equal(p[0].address, 'test3-works@example.com')
+          assert.equal(connection.transaction.notes.get('queue.wants'), undefined)
+          resolve()
+        },
+        connection,
+        p,
+      )
+    })
+  })
+
+  it('cross-domain string alias sets queue.wants to outbound', async () => {
+    const p = [new Address('<test5@example.com>')]
+    await new Promise((resolve) => {
+      plugin.aliases(
+        () => {
+          assert.equal(connection.transaction.notes.get('queue.wants'), 'outbound')
+          resolve()
+        },
+        connection,
+        p,
+      )
+    })
+  })
+
+  it('multi-target array alias updates params[0] to first target', async () => {
+    const p = [new Address('<test14@example.net>')]
+    await new Promise((resolve) => {
+      plugin.aliases(
+        () => {
+          assert.equal(p[0].address, 'alice@success.com')
+          assert.equal(connection.transaction.notes.get('queue.wants'), 'outbound')
+          resolve()
+        },
+        connection,
+        p,
+      )
+    })
+  })
 })
