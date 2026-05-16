@@ -39,7 +39,7 @@ exports.aliases = function (next, connection, params) {
         _drop(this, connection, drop1)
         break
       case 'alias':
-        _alias(this, connection, alias1, cfg[alias1], host)
+        _alias(this, connection, alias1, cfg[alias1], host, params)
         break
       default:
         connection.loginfo(this, `unknown action: ${action1}`)
@@ -86,7 +86,7 @@ function _drop(plugin, connection, rcpt) {
   connection.transaction.notes.discard = true
 }
 
-function _alias(plugin, connection, key, config, host) {
+function _alias(plugin, connection, key, config, host, params) {
   if (!connection?.transaction) return
   if (!config.to) {
     connection.loginfo(
@@ -97,17 +97,30 @@ function _alias(plugin, connection, key, config, host) {
   }
 
   const txn = connection.transaction
+  let firstTarget
   if (Array.isArray(config.to)) {
     connection.loginfo(plugin, `aliasing ${txn.rcpt_to} to ${config.to}`)
     txn.rcpt_to.pop()
     for (const addr of config.to) {
       txn.rcpt_to.push(new Address(`<${addr}>`))
     }
+    firstTarget = config.to[0]
   } else {
     const to = config.to.search('@') === -1 ? `${config.to}@${host}` : config.to
     connection.loginfo(plugin, `aliasing ${txn.rcpt_to} to ${to}`)
     txn.rcpt_to.pop()
     txn.rcpt_to.push(new Address(`<${to}>`))
+    firstTarget = to
+  }
+
+  if (params) {
+    params[0] = new Address(`<${firstTarget}>`)
+    const newHost = params[0].host
+    if (newHost && newHost.toLowerCase() !== host.toLowerCase()) {
+      if (!txn.notes.get('queue.wants')) {
+        txn.notes.set('queue.wants', 'outbound')
+      }
+    }
   }
 
   txn.notes.forward = true
