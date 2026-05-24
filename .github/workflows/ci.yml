@@ -12,6 +12,8 @@ env:
 jobs:
   lint:
     uses: haraka/.github/.github/workflows/lint.yml@master
+    permissions:
+      contents: read
 
   prettier:
     if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
@@ -29,6 +31,8 @@ jobs:
 
   ubuntu:
     uses: haraka/.github/.github/workflows/ubuntu.yml@master
+    permissions:
+      contents: read
 
   windows:
     uses: haraka/.github/.github/workflows/windows.yml@master
