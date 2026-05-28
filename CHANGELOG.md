@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Unreleased
 
+- refactor: improve qlty
+- test: add helpers to shrink LOC by 2/3
+
 ### [1.1.0] - 2026-05-24
 
 - dep(address-rfc2821): replaced with @haraka/email-address

@@ -1,5 +1,4 @@
-[![Build Status][ci-img]][ci-url]
-[![Code Climate][clim-img]][clim-url]
+[![Test][ci-img]][ci-url] [![Cover][cov-img]][cov-url] [![Qlty][qlty-img]][qlty-url]
 
 # haraka-plugin-aliases
 
@@ -160,5 +159,5 @@ If a single SMTP transaction contains both a cross-domain aliased recipient and 
 [ci-url]: https://github.com/haraka/haraka-plugin-aliases/actions/workflows/ci.yml
 [cov-img]: https://codecov.io/github/haraka/haraka-plugin-aliases/coverage.svg
 [cov-url]: https://codecov.io/github/haraka/haraka-plugin-aliases
-[clim-img]: https://codeclimate.com/github/haraka/haraka-plugin-aliases/badges/gpa.svg
-[clim-url]: https://codeclimate.com/github/haraka/haraka-plugin-aliases
+[qlty-img]: https://qlty.sh/gh/haraka/projects/haraka-plugin-aliases/maintainability.svg
+[qlty-url]: https://qlty.sh/gh/haraka/projects/haraka-plugin-aliases
