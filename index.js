@@ -25,59 +25,39 @@ exports.load_aliases = function () {
 }
 
 exports.aliases = function (next, connection, params) {
-  const cfg = this.cfg
-  const rcpt = params[0].address
-  const user = params[0].user
-  const host = params[0].host
-
-  let match = user.split(/[+-]/, 1)
-  let action = '<missing>'
-
-  const onMatch = (alias1, action1, drop1) => {
-    switch (action.toLowerCase()) {
-      case 'drop':
-        _drop(this, connection, drop1)
-        break
-      case 'alias':
-        _alias(this, connection, alias1, cfg[alias1], host, params)
-        break
-      default:
-        connection.loginfo(this, `unknown action: ${action1}`)
-    }
-  }
-
-  if (cfg[rcpt]) {
-    // full email address match
-    match = rcpt
-    if (cfg[match].action) action = cfg[match].action
-    onMatch(match, action, rcpt)
-  } else if (cfg[user]) {
-    // user only match
-    match = user
-    if (cfg[user].action) action = cfg[user].action
-    onMatch(match, action, rcpt)
-  } else if (cfg[`${match[0]}@${host}`]) {
-    // user prefix + domain match
-    match = `${match[0]}@${host}`
-    if (cfg[match].action) action = cfg[match].action
-    onMatch(match, action, rcpt)
-  } else if (cfg[match[0]]) {
-    // user prefix
-    match = match[0]
-    if (cfg[match].action) action = cfg[match].action
-    onMatch(match, action, rcpt)
-  } else if (cfg[`@${host}`]) {
-    // @domain match
-    match = `@${host}`
-    if (cfg[match].action) action = cfg[match].action
-    onMatch(match, action, match)
-  } else if (cfg['*']) {
-    // Match *. When having a * in the alias list it will rewrite all emails that have not been matched by the above rules
-    if (cfg['*'].action) action = cfg['*'].action
-    onMatch('*', action)
-  }
-
+  const { address: rcpt, user, host } = params[0]
+  const match = findMatch(this.cfg, rcpt, user, host)
+  if (match) applyMatch(this, connection, match, host, params)
   next()
+}
+
+function findMatch(cfg, rcpt, user, host) {
+  const prefix = user.split(/[+-]/, 1)[0]
+  const candidates = [
+    [rcpt, rcpt],
+    [user, rcpt],
+    [`${prefix}@${host}`, rcpt],
+    [prefix, rcpt],
+    [`@${host}`, `@${host}`],
+    ['*', null],
+  ]
+  for (const [key, drop] of candidates) {
+    if (cfg[key]) return { key, action: cfg[key].action ?? '<missing>', drop }
+  }
+  return null
+}
+
+function applyMatch(plugin, connection, { key, action, drop }, host, params) {
+  switch (action.toLowerCase()) {
+    case 'drop':
+      _drop(plugin, connection, drop)
+      break
+    case 'alias':
+      _alias(plugin, connection, { key, config: plugin.cfg[key], host, params })
+      break
+    default:
+      connection.loginfo(plugin, `unknown action: ${action}`)
+  }
 }
 
 function _drop(plugin, connection, rcpt) {
@@ -86,7 +66,7 @@ function _drop(plugin, connection, rcpt) {
   connection.transaction.notes.discard = true
 }
 
-function _alias(plugin, connection, key, config, host, params) {
+function _alias(plugin, connection, { key, config, host, params }) {
   if (!connection?.transaction) return
   if (!config.to) {
     connection.loginfo(
