@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - refactor: improve qlty
 - test: add helpers to shrink LOC by 2/3
+- test: refactored against test-fixtures 1.7.0
 
 ### [1.1.0] - 2026-05-24
 

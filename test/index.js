@@ -11,14 +11,12 @@ const {
   stub,
 } = require('haraka-test-fixtures')
 
-let plugin, params, connection
+let plugin, connection
 
 const _set_up = () => {
   plugin = makePlugin('aliases', { register: false, configDir: 'test' })
-  params = [new Address('<test1@example.com>')]
 
-  connection = makeConnection({ withTxn: true })
-  connection.transaction.rcpt_to = [params]
+  connection = makeConnection({ withTxn: true, rcptTo: ['test1@example.com'] })
   connection.loginfo = stub()
 
   plugin.inherits = stub()
@@ -76,7 +74,8 @@ describe('aliases', () => {
   })
 
   it('aliases hook always returns next()', async () => {
-    assert.equal(await runAlias(params), undefined)
+    const { rc } = await runAlias('<test1@example.com>')
+    assert.equal(rc, undefined)
   })
 
   it('should drop test1@example.com', async () => {
