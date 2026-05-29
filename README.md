@@ -1,6 +1,6 @@
-[![Test][ci-img]][ci-url] [![Cover][cov-img]][cov-url] [![Qlty][qlty-img]][qlty-url]
-
 # haraka-plugin-aliases
+
+[![Test][ci-img]][ci-url] [![Cover][cov-img]][cov-url] [![Qlty][qlty-img]][qlty-url]
 
 This plugin allows the configuration of aliases that perform an action or change the RCPT address. Aliases are specified in a JSON formatted config file, and must have an action. Syntax errors found in the JSON config will stop the server.
 
